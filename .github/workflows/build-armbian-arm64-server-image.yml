@@ -231,19 +231,19 @@ jobs:
           gh_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Inject Custom Files and Rebuild Armbian
-        if: \${{ steps.clean.outputs.status == 'success' && !cancelled() }}
+        if: ${{ steps.clean.outputs.status == 'success' && !cancelled() }}
         run: |
           sudo mkdir -p /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/build-armbian/armbian-files/common-files/etc/
           sudo cp -vf my-custom-files/etc/model_database.conf /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/build-armbian/armbian-files/common-files/etc/model_database.conf
 
       - name: Rebuild Armbian for target boards
         uses: ophub/amlogic-s9xxx-armbian@main
-        if: \${{ steps.clean.outputs.status == 'success' && !cancelled() }}
+        if: ${{ steps.clean.outputs.status == 'success' && !cancelled() }}
         with:
           build_target: armbian
           armbian_path: build/output/images/*.img.gz
-          armbian_board: \${{ inputs.armbian_board }}
-          armbian_kernel: \${{ inputs.armbian_kernel }}
+          armbian_board: ${{ inputs.armbian_board }}
+          armbian_kernel: ${{ inputs.armbian_kernel }}
           auto_kernel: true
           kernel_repo: \${{ inputs.kernel_repo }}
           kernel_usage: \${{ inputs.kernel_usage }}
