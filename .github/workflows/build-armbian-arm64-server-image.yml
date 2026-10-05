@@ -230,6 +230,17 @@ jobs:
           make_latest: true
           gh_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Inject Custom Files and Rebuild Armbian
+        if: ${{ steps.clean.outputs.status == 'success' && !cancelled() }}
+        run: |
+          # 1. 强行建立官方打包脚本期望的真实绝对路径
+          sudo mkdir -p /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/build-armbian/armbian-files/common-files/etc/
+          sudo mkdir -p /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/build-armbian/armbian-files/common-files/usr/boot/
+
+          # 2. 强行跨目录拷贝你仓库里的配置文件到官方绝对路径下（支持模糊匹配）
+          sudo cp -vf ./*custom-files*/etc/model_database.conf /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/build-armbian/armbian-files/common-files/etc/model_database.conf || true
+          sudo cp -vf ./*custom-files*/usr/boot/rk3588s-wed-23588s.dtb /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/build-armbian/armbian-files/common-files/usr/boot/rk3588s-wed-23588s.dtb || true
+
       - name: Rebuild Armbian for target boards
         uses: ophub/amlogic-s9xxx-armbian@main
         if: ${{ steps.clean.outputs.status == 'success' && !cancelled() }}
@@ -243,7 +254,8 @@ jobs:
           kernel_usage: ${{ inputs.kernel_usage }}
           armbian_fstype: ${{ inputs.armbian_fstype }}
           builder_name: ${{ inputs.builder_name }}
-          armbian_files: "my-custom-files"
+          # 3. 彻底关掉官方这个有 Bug 的自动拷贝参数，不让他去跑 cp 命令报错
+          armbian_files: false
           
       - name: Upload rebuilt images to Release
         uses: ophub/upload-to-releases@main
