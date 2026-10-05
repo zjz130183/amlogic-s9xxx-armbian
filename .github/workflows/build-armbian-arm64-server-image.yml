@@ -233,13 +233,19 @@ jobs:
       - name: Inject Custom Files and Rebuild Armbian
         if: ${{ steps.clean.outputs.status == 'success' && !cancelled() }}
         run: |
-          # 1. 强行建立官方打包脚本期望的真实绝对路径
+          # 强行建立官方打包脚本期望的真实绝对路径
           sudo mkdir -p /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/build-armbian/armbian-files/common-files/etc/
           sudo mkdir -p /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/build-armbian/armbian-files/common-files/usr/boot/
+          
+          # 强行建立 Rockchip 平台专用的 bootfs 固件缓存设备树目录
+          sudo mkdir -p /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/build-armbian/armbian-files/platform-files/rockchip/bootfs/dtb/rockchip/
 
-          # 2. 强行跨目录拷贝你仓库里的配置文件到官方绝对路径下（支持模糊匹配）
+          # 强行跨目录拷贝你仓库里的配置文件到官方绝对路径下
           sudo cp -vf ./*custom-files*/etc/model_database.conf /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/build-armbian/armbian-files/common-files/etc/model_database.conf || true
           sudo cp -vf ./*custom-files*/usr/boot/rk3588s-wed-23588s.dtb /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/build-armbian/armbian-files/common-files/usr/boot/rk3588s-wed-23588s.dtb || true
+          
+          # 将你的设备树实体文件，强行注入到 rockchip 平台的最终打包打包缓存中
+          sudo cp -vf ./*custom-files*/usr/boot/rk3588s-wed-23588s.dtb /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/build-armbian/armbian-files/platform-files/rockchip/bootfs/dtb/rockchip/rk3588s-wed-23588s.dtb || true
 
       - name: Rebuild Armbian for target boards
         uses: ophub/amlogic-s9xxx-armbian@main
