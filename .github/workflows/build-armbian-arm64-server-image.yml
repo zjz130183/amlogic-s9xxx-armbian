@@ -163,7 +163,7 @@ jobs:
           build_dev=$(sudo losetup --find --show /root.img)
           echo "Using /: ${root_size}G"
 
-          sudo mkfs.xfs -f -i sparse=0 -b size=4096 "${build_dev}"
+          sudo mkfs.ext4 -F -O ^metadata_csum,^64bit "${build_dev}"
           sudo mkdir -p /builder
           sudo mount "${build_dev}" /builder
           sudo chown -R runner:runner /builder
