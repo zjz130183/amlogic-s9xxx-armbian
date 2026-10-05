@@ -26,15 +26,6 @@ on:
         default: "amlogic"
         type: choice
         options:
-          - cm3588-nas
-          - dc-a588
-          - firefly-itx-3588j
-          - h88k
-          - h88k-v3
-          - lz-d3588
-          - nanopc-t6
-          - youyeetoo-r1-v3
-          - youyeetoo-yy3588
           - wed-23588s
       armbian_kernel:
         description: "Select kernel version."
