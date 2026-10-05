@@ -35,6 +35,7 @@ on:
           - nanopc-t6
           - youyeetoo-r1-v3
           - youyeetoo-yy3588
+          - wed-23588s
       armbian_kernel:
         description: "Select kernel version."
         required: false
